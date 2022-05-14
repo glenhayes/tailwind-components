@@ -19,6 +19,7 @@ import {
   startOfToday,
   startOfWeek,
 } from 'date-fns';
+import classNames from 'classnames';
 
 const meetings = [
   {
@@ -65,10 +66,6 @@ const colStartClasses = [
   'col-start-6',
   'col-start-7',
 ];
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ');
-}
 
 function EventsCalendar() {
   const today = startOfToday();
