@@ -132,6 +132,7 @@ function EventsCalendar() {
                   day={day}
                   dayInx={dayIdx}
                   selectedDay={selectedDay}
+                  setSelectedDay={setSelectedDay}
                   firstDayOfCurrentMonth={firstDayOfCurrentMonth}
                   meetings={meetings}
                 />
@@ -184,7 +185,14 @@ function CalendarNav({ getPrevMonth, getNextMonth }) {
   );
 }
 
-function Day({ day, dayIdx, selectedDay, firstDayOfCurrentMonth, meetings }) {
+function Day({
+  day,
+  dayIdx,
+  selectedDay,
+  setSelectedDay,
+  firstDayOfCurrentMonth,
+  meetings,
+}) {
   return (
     <div
       key={day.toISOString()}
