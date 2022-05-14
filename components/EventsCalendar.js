@@ -111,22 +111,10 @@ function EventsCalendar() {
               <h2 className="flex-auto font-semibold text-gray-900">
                 {format(firstDayOfCurrentMonth, 'MMMM yyyy')}
               </h2>
-              <button
-                type="button"
-                onClick={getPrevMonth}
-                className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-              >
-                <span className="sr-only">Previous month</span>
-                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                onClick={getNextMonth}
-                className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
-              >
-                <span className="sr-only">Next month</span>
-                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-              </button>
+              <CalendarNav
+                getPrevMonth={getPrevMonth}
+                getNextMonth={getNextMonth}
+              />
             </div>
             <div className="mt-10 grid grid-cols-7 text-center text-xs leading-6 text-gray-500">
               <div>S</div>
@@ -139,51 +127,14 @@ function EventsCalendar() {
             </div>
             <div className="mt-2 grid grid-cols-7 text-sm">
               {days.map((day, dayIdx) => (
-                <div
+                <Day
                   key={day.toISOString()}
-                  className={classNames(
-                    dayIdx === 0 && colStartClasses[getDay(day)],
-                    'py-2'
-                  )}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setSelectedDay(day)}
-                    className={classNames(
-                      isEqual(day, selectedDay) && 'text-white',
-                      !isEqual(day, selectedDay) &&
-                        isToday(day) &&
-                        'text-red-600',
-                      !isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        isSameMonth(day, firstDayOfCurrentMonth) &&
-                        'text-gray-900',
-                      !isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        !isSameMonth(day, firstDayOfCurrentMonth) &&
-                        'text-gray-400',
-                      isEqual(day, selectedDay) && isToday(day) && 'bg-red-600',
-                      isEqual(day, selectedDay) &&
-                        !isToday(day) &&
-                        'bg-gray-900',
-                      !isEqual(day, selectedDay) && 'hover:bg-gray-200',
-                      (isEqual(day, selectedDay) || isToday(day)) &&
-                        'font-semibold',
-                      'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
-                    )}
-                  >
-                    <time dateTime={format(day, 'yyyy-MM-dd')}>
-                      {format(day, 'd')}
-                    </time>
-                  </button>
-                  <div className="relative flex justify-center">
-                    {meetings.some((meeting) =>
-                      isSameDay(parseISO(meeting.startDateTime), day)
-                    ) && (
-                      <div className="absolute w-1 h-1 bg-sky-500 rounded-full mx-auto mt-1"></div>
-                    )}
-                  </div>
-                </div>
+                  day={day}
+                  dayInx={dayIdx}
+                  selectedDay={selectedDay}
+                  firstDayOfCurrentMonth={firstDayOfCurrentMonth}
+                  meetings={meetings}
+                />
               ))}
             </div>
           </div>
@@ -205,6 +156,72 @@ function EventsCalendar() {
             </ol>
           </section>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CalendarNav({ getPrevMonth, getNextMonth }) {
+  return (
+    <Fragment>
+      <button
+        type="button"
+        onClick={getPrevMonth}
+        className="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+      >
+        <span className="sr-only">Previous month</span>
+        <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        onClick={getNextMonth}
+        className="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500"
+      >
+        <span className="sr-only">Next month</span>
+        <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+      </button>
+    </Fragment>
+  );
+}
+
+function Day({ day, dayIdx, selectedDay, firstDayOfCurrentMonth, meetings }) {
+  return (
+    <div
+      key={day.toISOString()}
+      className={classNames(
+        dayIdx === 0 && colStartClasses[getDay(day)],
+        'py-2'
+      )}
+    >
+      <button
+        type="button"
+        onClick={() => setSelectedDay(day)}
+        className={classNames(
+          isEqual(day, selectedDay) && 'text-white',
+          !isEqual(day, selectedDay) && isToday(day) && 'text-red-600',
+          !isEqual(day, selectedDay) &&
+            !isToday(day) &&
+            isSameMonth(day, firstDayOfCurrentMonth) &&
+            'text-gray-900',
+          !isEqual(day, selectedDay) &&
+            !isToday(day) &&
+            !isSameMonth(day, firstDayOfCurrentMonth) &&
+            'text-gray-400',
+          isEqual(day, selectedDay) && isToday(day) && 'bg-red-600',
+          isEqual(day, selectedDay) && !isToday(day) && 'bg-gray-900',
+          !isEqual(day, selectedDay) && 'hover:bg-gray-200',
+          (isEqual(day, selectedDay) || isToday(day)) && 'font-semibold',
+          'mx-auto flex h-8 w-8 items-center justify-center rounded-full'
+        )}
+      >
+        <time dateTime={format(day, 'yyyy-MM-dd')}>{format(day, 'd')}</time>
+      </button>
+      <div className="relative flex justify-center">
+        {meetings.some((meeting) =>
+          isSameDay(parseISO(meeting.startDateTime), day)
+        ) && (
+          <div className="absolute w-1 h-1 bg-sky-500 rounded-full mx-auto mt-1"></div>
+        )}
       </div>
     </div>
   );
